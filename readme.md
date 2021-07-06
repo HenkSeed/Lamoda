@@ -20,5 +20,11 @@
   - .getItem;
 - применение тернарного оператора;
 - .textContent;
+- работа с модальным окном:
+  - event.target;
+  - target.classList.add('');
+  - target.classList.remove('');
+  - target.classList.contains('');
+  - target.matches('.')
 
-Содержимое localStorage браузера можно посмотреть в закладке Application инструмента разработчика (F12)
+* Содержимое localStorage браузера можно посмотреть в закладке Application инструмента разработчика (F12)
