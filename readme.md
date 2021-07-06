@@ -12,6 +12,8 @@
 
 В коде JS применены следующие функции и методы:
 
+## Day 01
+
 - document.querySelector();
 - document.addEventListener() на события:
   - click;
@@ -26,5 +28,10 @@
   - target.classList.remove('');
   - target.classList.contains('');
   - target.matches('.')
+- ${} - интерполяция;
+- document.body.style.cssText = ``
+- window.innerWidth;
+- document.body.offsetWidth;
+- window.scroll({});
 
 * Содержимое localStorage браузера можно посмотреть в закладке Application инструмента разработчика (F12)
