@@ -72,6 +72,59 @@ const cartModalClose = () => {
 	enableScroll(); // 1-й и 2-й способы
 };
 
+// ЗАПРОС БАЗЫ ДАННЫХ
+
+const getData = async () => {
+	const data = await fetch('db.json'); // функция асинхронная, поэтому данных в константе data
+	// не будет, а будет promise (обещание, что данные будут, но надо подождать)
+	// параметр await означает ожидание получения данных
+	if (data.ok) {
+		return data.json();
+	} else {
+		// Формируем сообщение об ошибке
+		throw new Error(
+			`Данные не были получены. Ошибка ${data.status} ${data.statusText}`
+		);
+	}
+};
+
+// Первый Вариант обработки ошибки:
+// Когда функция выполнится, тогда ... выполнятся две стрелочные функции
+// getData().then(
+// 	(data) => {
+// 		console.log(data);
+// 	},
+// 	(err) => {
+// 		console.error(err);
+// 	}
+// );
+
+// Второй Вариант обработки ошибки (его применим в callback-функции getGoods):
+// getData()
+// 	.then((data) => {
+// 		console.log(data);
+// 	})
+// 	.catch((err) => {
+// 		console.error(err);
+// 	});
+
+// callback-функция - это отложенная функция (срабатывает после событий типа 'click',
+// после получения данных с сервера, после получения ошибки и т.д.)
+
+const getGoods = (callback) => {
+	getData()
+		.then((data) => {
+			callback(data);
+		})
+		.catch((err) => {
+			console.error(err);
+		});
+};
+
+getGoods((data) => {
+	console.warn(data);
+});
+
 subheaderCart.addEventListener('click', cartModalOpen);
 
 cartOverlay.addEventListener('click', (event) => {

@@ -1,4 +1,4 @@
-# Day 01: Lomoda
+# Lomoda
 
 ## Интенсив по Javascript от Максима Лескина
 
@@ -35,3 +35,19 @@
 - window.scroll({});
 
 * Содержимое localStorage браузера можно посмотреть в закладке Application инструмента разработчика (F12)
+
+## Day 02
+
+- асинхронные функции:
+  - async;
+  - await;
+  - fetch;
+- if (data.ok);
+- throw new Error (``);
+- варианты вывода в консоль:
+  - console.log(data);
+  - console.dir(data);
+  - console.error(data);
+  - console.warn(data);
+- .then;
+- .catch;
