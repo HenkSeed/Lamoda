@@ -1,5 +1,9 @@
 const headerCityButton = document.querySelector('.header__city-button');
 
+const goodsTitle = document.querySelector('.goods__title'); // Для смены заголовка "Мужчинам"<->"Женщинам"<->"Детям"
+
+let hash = location.hash.substring(1); // Определяем и сохрняем в переменную хеш страницы, убрав знак # функцией substring
+
 // Первый вариант с использованием if:
 // if (localStorage.getItem('lomoda-location')) {
 // 	headerCityButton.textContent = localStorage.getItem('lomoda-location');
@@ -34,7 +38,7 @@ const disableScroll = () => {
 	// форма ${}, используемая ниже, называется интерполяция
 	// position: fixed; // применённое ниже,
 	// width: 100%;	// используется для
-	// height: 100vh;	// совместимости с iPhone
+	// height: 100vh;	// кроссбраузерной совместимости
 
 	document.body.style.cssText = `
 	position: fixed; 
@@ -111,28 +115,153 @@ const getData = async () => {
 // callback-функция - это отложенная функция (срабатывает после событий типа 'click',
 // после получения данных с сервера, после получения ошибки и т.д.)
 
-const getGoods = (callback) => {
+const getGoods = (callback, value) => {
 	getData()
 		.then((data) => {
-			callback(data);
+			console.log('value: ', value);
+			if (value) {
+				callback(data.filter((item) => item.category === value)); // Фильтр категорий товара
+			} else {
+				callback(data);
+			}
 		})
 		.catch((err) => {
 			console.error(err);
 		});
 };
 
-getGoods((data) => {
-	console.warn(data);
-});
-
+// ОБРАБОТКА СОБЫТИЙ МОДАЛЬНОГО ОКНА КОРЗИНЫ
+// ===========================================================================
 subheaderCart.addEventListener('click', cartModalOpen);
 
 cartOverlay.addEventListener('click', (event) => {
 	const target = event.target;
-	console.log('target: ', target);
+	// console.log('target: ', target);
 	// if (target.classList.contains('cart__btn-close')) { - Первый вариант
 	if (target.matches('.cart__btn-close') || target.matches('.cart-overlay')) {
 		// Второй вариант, плюс добавлено закрытие по клику мимо окна
 		cartModalClose();
 	}
 }); // элемент event создается во время любого события
+
+// Закрытие модального окна по нажатию клавиши Esc
+document.addEventListener('keydown', (data) => {
+	if (data.key === 'Escape') {
+		cartModalClose();
+	}
+});
+// ============================================================================
+
+// ВЫВОД КАРТОЧЕК ТОВАРОВ
+// ============================================================================
+
+try {
+	console.log(hash);
+	// Проверяем, действительно ли мы находимся на странице с товарами конструкцией try{}catch{}
+	const goodsList = document.querySelector('.goods__list');
+	if (!goodsList) {
+		throw 'This is not a goods page';
+	}
+	// Создаёт карточку товара в точке вызова
+
+	// const createCard = (data) => {   // Это при использовании двух первых вариантов присвоения
+	const createCard = ({ id, name, cost, brand, preview, sizes }) => {
+		// Можно присвоить переменным значение объекта так:
+		// const id = data.id;
+		// const name = data.name;
+		// const cost = data.cost;
+		// const brand = data.brand;
+		// const preview = data.preview;
+		// const sizes = data.sizes;
+
+		// А можно так:
+		// const { id, name, cost, brand, preview, sizes } = data;
+
+		// А можно сразу создать эти свойства объекта при создании функции createCard (смотреть выше)
+
+		const li = document.createElement('li');
+		li.classList.add('goods__item');
+
+		// Используем шаблонную строку для включения HTML кода (заполняем карточку товара)
+		// sizes.join(' ') - выводит элементы массива sizes[] с разделителем "пробел",
+		// тернарный оператор ${sizes ? `` : ''} выводит размеры, если они есть в базе по данному товару, и 'нет', если их нет
+		li.innerHTML = `
+		<article class="good">
+			<a class="good__link-img" href="card-good.html#${id}">
+				<img
+					class="good__img"
+					src="goods-image/${preview}"
+					alt=""
+				/>
+			</a>
+			<div class="good__description">
+				<p class="good__price">${cost} &#8381;</p>
+				<h3 class="good__title">
+					${brand} <span class="good__title__grey">/ ${name}</span>
+				</h3>
+				<p class="good__sizes">
+					Размеры (RUS):
+					${sizes ? `<span class="good__sizes-list">${sizes.join(' ')}</span>` : 'нет'}
+					
+				</p>
+				<a class="good__link" href="card-good.html#${id}"
+					>Подробнее</a
+				>
+			</div>
+		</article>
+		`;
+		return li;
+	};
+
+	// Рендерим карточки товаров, получая их с сервера
+	// Создаём renderGoodsList, которую будем использовать в качестве callback-функции
+	const renderGoodsList = (data) => {
+		// console.log('data: ', data);
+		goodsList.textContent = ''; // очищаем карточки товаров
+
+		// Первый вариант организации цикла перебора карточек
+		// for (let i = 0; i < data.length; i++) {
+		// 	console.log('for: ', data[i]);
+		// }
+
+		// Второй вариант организации цикла перебора карточек
+		// for (const item of data) {
+		// 	console.log('forof: ', item);
+		// }
+
+		// Третий вариант организации перебора карточек (не цикл, а функция перебора)
+		// У функции три параметра: (element, index, array). Имена параметров назначаются произвольно
+
+		data.forEach((element, index, array) => {
+			// console.log('forEach: ', index);
+			// console.log('forEach: ', element);
+			// console.log('forEach: ', array);   // С каждой итерацией выводится один и тот же массив
+			//                                    // (копии не создаются, а используются разные указатели на
+			//                                    // него)
+			const card = createCard(element); // Заполняем карточку данными очередного element из базы
+			goodsList.append(card); // Выводим карточку на страницу
+		});
+	};
+
+	window.addEventListener('hashchange', () => {
+		hash = location.hash.substring(1);
+		getGoods(renderGoodsList, hash);
+
+		// Для смены заголовка "Мужчинам"<->"Женщинам"<->"Детям"
+		if (hash === 'men') {
+			goodsTitle.textContent = 'Мужчинам';
+		}
+		if (hash === 'women') {
+			goodsTitle.textContent = 'Женщинам';
+		}
+		if (hash === 'kids') {
+			goodsTitle.textContent = 'Детям';
+		}
+	});
+
+	getGoods(renderGoodsList, hash);
+
+	// Отрабатывает, если мы не находимся на странице с товарами
+} catch (err) {
+	console.warn(err);
+}
