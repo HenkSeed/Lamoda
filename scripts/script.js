@@ -121,6 +121,15 @@ const getGoods = (callback, value) => {
 			console.log('value: ', value);
 			if (value) {
 				callback(data.filter((item) => item.category === value)); // Фильтр категорий товара
+				if (value === 'men') {
+					goodsTitle.textContent = 'Мужчинам';
+				}
+				if (value === 'women') {
+					goodsTitle.textContent = 'Женщинам';
+				}
+				if (value === 'kids') {
+					goodsTitle.textContent = 'Детям';
+				}
 			} else {
 				callback(data);
 			}
@@ -248,15 +257,16 @@ try {
 		getGoods(renderGoodsList, hash);
 
 		// Для смены заголовка "Мужчинам"<->"Женщинам"<->"Детям"
-		if (hash === 'men') {
-			goodsTitle.textContent = 'Мужчинам';
-		}
-		if (hash === 'women') {
-			goodsTitle.textContent = 'Женщинам';
-		}
-		if (hash === 'kids') {
-			goodsTitle.textContent = 'Детям';
-		}
+		// НЕ РАБОТАЕТ, ЕСЛИ НЕ ИЗМЕНИЛСЯ ХЕШ !!!, то есть до первого выбора категории товара
+		// if (hash === 'men') {
+		// 	goodsTitle.textContent = 'Мужчинам';
+		// }
+		// if (hash === 'women') {
+		// 	goodsTitle.textContent = 'Женщинам';
+		// }
+		// if (hash === 'kids') {
+		// 	goodsTitle.textContent = 'Детям';
+		// }
 	});
 
 	getGoods(renderGoodsList, hash);
