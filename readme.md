@@ -61,3 +61,8 @@
 - location.hash;
 - .substring ();
 - window.addEventListener('hashchange', () => {}) - обработка события "смена хеша"
+
+## Day 03
+
+- .closest;
+- .reduce;
